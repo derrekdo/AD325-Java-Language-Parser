@@ -1,4 +1,9 @@
+import java.util.TreeSet;
+
 public class Parser {
+
+    TreeSet<String> reservedWords;
+
     public Parser(){
 
     }

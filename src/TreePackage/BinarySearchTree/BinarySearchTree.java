@@ -60,8 +60,11 @@ public class BinarySearchTree<T extends Comparable<? super T>>
 
         if (isEmpty())
             setRootNode(new BinaryNode<>(newEntry));
-        else
+        else{
+            BinaryNode<T> root = getRootNode();
             result = addEntry(getRootNode(), newEntry);
+            setRootNode(rebalance(root));
+        }
 
         return result;
     } // end add
@@ -80,19 +83,23 @@ public class BinarySearchTree<T extends Comparable<? super T>>
         }
         else if (comparison < 0)
         {
-            if (rootNode.hasLeftChild())
+            if (rootNode.hasLeftChild()) {
                 result = addEntry(rootNode.getLeftChild(), anEntry);
-            else
+                rootNode.setLeftChild(rebalance(rootNode.getLeftChild()));
+            }else{
                 rootNode.setLeftChild(new BinaryNode<>(anEntry));
+            }
         }
         else
         {
             // Assertion: comparison > 0
 
-            if (rootNode.hasRightChild())
+            if (rootNode.hasRightChild()) {
                 result = addEntry(rootNode.getRightChild(), anEntry);
-            else
+                rootNode.setRightChild(rebalance(rootNode.getRightChild()));
+            }else{
                 rootNode.setRightChild(new BinaryNode<>(anEntry));
+            }
         } // end if
 
         return result;
@@ -223,8 +230,48 @@ public class BinarySearchTree<T extends Comparable<? super T>>
         } // end set
     } // end ReturnObject
 
-    public BinaryNode<T> balance(BinaryNode<T> node){
+    public BinaryNode<T> rebalance(BinaryNode<T> node){
+        int height = heightBalance(node);
+
+        if(height == 0 || height == 1){
+            return node;
+        }
+
+        if(height > 1){
+            if(heightBalance(node.getRightChild()) > 0){
+                leftRotation(node);
+            }else{
+                rightLeftRotation(node);
+            }
+        }else if(height < -1){
+            if(heightBalance(node.getLeftChild()) < 0){
+                rightRotation(node);
+            }else{
+                leftRightRotation(node);
+            }
+        }
         return node;
+    }
+
+    private int heightBalance(BinaryNode<T> node){
+        BinaryNode<T> rightNode = node.getRightChild();
+        BinaryNode<T> leftNode = node.getLeftChild();
+
+        int rightHeight;
+        int leftHeight;
+
+        if(leftNode == null){
+            leftHeight = 0;
+        }else{
+            leftHeight = leftNode.getHeight();
+        }
+
+        if(rightNode == null){
+            rightHeight = 0;
+        }else{
+            rightHeight = rightNode.getHeight();
+        }
+        return rightHeight - leftHeight;
     }
 
     private BinaryNode<T> rightRotation(BinaryNode<T> node){
