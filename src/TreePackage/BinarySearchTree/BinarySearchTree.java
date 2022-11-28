@@ -61,9 +61,8 @@ public class BinarySearchTree<T extends Comparable<? super T>>
         if (isEmpty())
             setRootNode(new BinaryNode<>(newEntry));
         else{
-            BinaryNode<T> root = getRootNode();
             result = addEntry(getRootNode(), newEntry);
-            setRootNode(rebalance(root));
+            setRootNode(balance(getRootNode()));
         }
 
         return result;
@@ -85,7 +84,7 @@ public class BinarySearchTree<T extends Comparable<? super T>>
         {
             if (rootNode.hasLeftChild()) {
                 result = addEntry(rootNode.getLeftChild(), anEntry);
-                rootNode.setLeftChild(rebalance(rootNode.getLeftChild()));
+                rootNode.setLeftChild(balance(rootNode.getLeftChild()));
             }else{
                 rootNode.setLeftChild(new BinaryNode<>(anEntry));
             }
@@ -96,7 +95,7 @@ public class BinarySearchTree<T extends Comparable<? super T>>
 
             if (rootNode.hasRightChild()) {
                 result = addEntry(rootNode.getRightChild(), anEntry);
-                rootNode.setRightChild(rebalance(rootNode.getRightChild()));
+                rootNode.setRightChild(balance(rootNode.getRightChild()));
             }else{
                 rootNode.setRightChild(new BinaryNode<>(anEntry));
             }
@@ -230,73 +229,121 @@ public class BinarySearchTree<T extends Comparable<? super T>>
         } // end set
     } // end ReturnObject
 
-    public BinaryNode<T> rebalance(BinaryNode<T> node){
+    /**
+     * checks if the tree is unbalanced and balances the tree
+     * @param node root node of tree
+     * @return the subtree after being balanced
+     */
+    public BinaryNode<T> balance(BinaryNode<T> node){
+        //gets the height difference of the subtrees
         int height = heightBalance(node);
 
+        //if the height is difference is 0 or 1 return
         if(height == 0 || height == 1){
             return node;
         }
 
+        //if height is greater than 1, the right subtree is unbalanced
         if(height > 1){
+            //node creating imbalance is in right subtree
             if(heightBalance(node.getRightChild()) > 0){
-                leftRotation(node);
+                node = leftRotation(node);
+
+            //node creating imbalance in left subtree
             }else{
-                rightLeftRotation(node);
+                node = rightLeftRotation(node);
             }
+        //if height less than -1, left subtree is unbalanced
         }else if(height < -1){
+            //node creating imbalance is in left subtree
             if(heightBalance(node.getLeftChild()) < 0){
-                rightRotation(node);
+                node = rightRotation(node);
+
+            //node creating imbalance is in right subtree
             }else{
-                leftRightRotation(node);
+                node = leftRightRotation(node);
             }
         }
         return node;
     }
 
     private int heightBalance(BinaryNode<T> node){
-        BinaryNode<T> rightNode = node.getRightChild();
-        BinaryNode<T> leftNode = node.getLeftChild();
-
+        //height/depth of the subtrees
         int rightHeight;
         int leftHeight;
 
-        if(leftNode == null){
+        //no left child, thus leftHeight is 0
+        if(node.getLeftChild() == null){
             leftHeight = 0;
+        //get height of the left child
         }else{
-            leftHeight = leftNode.getHeight();
+            leftHeight = node.getLeftChild().getHeight();
         }
 
-        if(rightNode == null){
+        //no right child, thus rightHeight is 0
+        if(node.getRightChild() == null){
             rightHeight = 0;
+        //get height of the right child
         }else{
-            rightHeight = rightNode.getHeight();
+            rightHeight = node.getRightChild().getHeight();
         }
+        //returns the height difference
         return rightHeight - leftHeight;
     }
 
+    /**
+     * balances the left subtree of the left child
+     * @param node the root node of the tree
+     * @return the balanced subtree
+     */
     private BinaryNode<T> rightRotation(BinaryNode<T> node){
+        //temp node to hold the left child, and act as the pivot
         BinaryNode<T> tempNode = node.getLeftChild();
+        //changes left child to hold the temp nodes right child
         node.setLeftChild(tempNode.getRightChild());
+        //changes temp nodes right child to the root node
         tempNode.setRightChild(node);
         return tempNode;
     }
 
+    /**
+     * balances the right subtree of the right child
+     * @param node the root node of the tree
+     * @return the balanced subtree
+     */
     private BinaryNode<T> leftRotation(BinaryNode<T> node){
+        //temp node to hold the right child, and act as the pivot
         BinaryNode<T> tempNode = node.getRightChild();
+        //right child will hold temp nodes left child
         node.setRightChild(tempNode.getLeftChild());
+        //changes temp nodes right child to the root node
         tempNode.setLeftChild(node);
         return tempNode;
     }
 
+    /**
+     * Balances the right subtree os the left child
+     * @param node the root node of the tree
+     * @return the balanced subtree
+     */
     private BinaryNode<T> leftRightRotation(BinaryNode<T> node){
+        //balances the right subtree of the left child
         BinaryNode<T> tempNode = node.getLeftChild();
         node.setLeftChild(leftRotation(tempNode));
+        //balances the left subtree
         return rightRotation(node);
     }
 
+    /**
+     * balances the left subtree of the right child
+     * @param node the root node
+     * @return the balance tree
+     */
     private BinaryNode<T> rightLeftRotation(BinaryNode<T> node){
+        //balances the left subtree of the right child
         BinaryNode<T> tempNode = node.getRightChild();
         node.setRightChild(rightRotation(tempNode));
+        //balances the right subtree
         return leftRotation(node);
     }
 } // end BinarySearchTree
