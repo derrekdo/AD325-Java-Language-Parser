@@ -222,4 +222,34 @@ public class BinarySearchTree<T extends Comparable<? super T>>
             item = entry;
         } // end set
     } // end ReturnObject
+
+    public BinaryNode<T> balance(BinaryNode<T> node){
+        return node;
+    }
+
+    private BinaryNode<T> rightRotation(BinaryNode<T> node){
+        BinaryNode<T> tempNode = node.getLeftChild();
+        node.setLeftChild(tempNode.getRightChild());
+        tempNode.setRightChild(node);
+        return tempNode;
+    }
+
+    private BinaryNode<T> leftRotation(BinaryNode<T> node){
+        BinaryNode<T> tempNode = node.getRightChild();
+        node.setRightChild(tempNode.getLeftChild());
+        tempNode.setLeftChild(node);
+        return tempNode;
+    }
+
+    private BinaryNode<T> leftRightRotation(BinaryNode<T> node){
+        BinaryNode<T> tempNode = node.getLeftChild();
+        node.setLeftChild(leftRotation(tempNode));
+        return rightRotation(node);
+    }
+
+    private BinaryNode<T> rightLeftRotation(BinaryNode<T> node){
+        BinaryNode<T> tempNode = node.getRightChild();
+        node.setRightChild(rightRotation(tempNode));
+        return leftRotation(node);
+    }
 } // end BinarySearchTree
