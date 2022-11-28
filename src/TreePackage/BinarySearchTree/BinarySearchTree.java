@@ -4,6 +4,9 @@ import TreePackage.BinaryNode;
 import TreePackage.BinaryTree;
 import TreePackage.BinaryTreeInterface;
 
+/**
+ * {@inheritDoc}
+ */
 public class BinarySearchTree<T extends Comparable<? super T>>
         extends BinaryTree<T> implements SearchTreeInterface<T>
 {

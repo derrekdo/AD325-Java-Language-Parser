@@ -1,9 +1,5 @@
-import TreePackage.BinarySearchTree.BinarySearchTree;
-
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
@@ -28,11 +24,5 @@ public class Main {
         System.out.println("List of Keywords found:");
         parser.getReservedWordsBST();
         System.out.println();
-
-
-
-
     }
-
-
 }
